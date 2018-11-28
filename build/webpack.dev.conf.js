@@ -4,6 +4,11 @@ const webpack = require('webpack')
 const config = require('../config')
 const merge = require('webpack-merge')
 const path = require('path')
+var express = require('express')
+var axios = require('axios')
+var app = express()
+var apiRoutes = express.Router()
+app.use('/api', apiRoutes)           //设置路由
 const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -22,6 +27,38 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
+    before(app) {
+      //代理请求
+      app.get('/api/getDiscList', function (req, res){
+        var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg' // 服务端请求原api
+        axios.get(url, {        //通过axios发送http请求，同时更改referer和host，并且把参数拓展给服务端
+          headers: {             
+            referer: 'https://c.y.qq.com/',        
+            host: 'c.y.qq.com'
+          },
+          params: req.query    //浏览器请求该接口所带来的参数 
+        }).then((response) => {    //成功回调
+          res.json(response.data)    //response是QQ接口返回的，res是我们自己的。所以要把数据输出给浏览器前端
+        }).catch((e) => {    //如果接口有问题，catch（）
+          console.log(e)
+        })
+      }),
+      app.get('/api/getSingerList', function (req, res) {
+        var url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg' // 服务端请求原api
+        axios.get(url, {        //通过axios发送http请求，同时更改referer和host，并且把参数拓展给服务端
+          headers: {             
+            referer: 'https://c.y.qq.com/',        
+            host: 'c.y.qq.com'
+          },
+          params: req.query    //浏览器请求该接口所带来的参数 
+        }).then((response) => {    //成功回调
+        res.json(response.data)    //response是QQ接口返回的，res是我们自己的。所以要把数据输出给浏览器前端
+        }).catch((e) => {    //如果接口有问题，catch（）
+        console.log(e)
+        })
+      })
+    },
+      
     clientLogLevel: 'warning',
     historyApiFallback: {
       rewrites: [
@@ -92,4 +129,6 @@ module.exports = new Promise((resolve, reject) => {
       resolve(devWebpackConfig)
     }
   })
+
+
 })

@@ -104,7 +104,6 @@
             if(this.autoPlay){
               clearTimeout(this.timer);//每次轮播前清除定时器
               this._play();
-
             }
           })
         },
@@ -130,6 +129,10 @@
             this.slider.next();
           },this.interval)
         }
+      },
+      
+      destroyed(){
+        clearTimeout(this.timer)
       }
     }
 </script>
