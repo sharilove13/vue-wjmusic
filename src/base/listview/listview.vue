@@ -1,11 +1,11 @@
 <template>
-    <scroll class="listview" :data="data" ref="listview" :listenScroll="listenScroll" :probeTybe="probeTybe" @scroll="scroll">
+    <scroll class="listview" :data="data" ref="listview" :listenScroll="listenScroll" :probe-tybe="probeTybe" @scroll="scroll">
         <!-- 歌手主体 -->
         <ul>
             <li v-for="(group,index) in data" :key="index" class="list-group" ref="listGroup">
                 <h2 class="list-group-title">{{group.title}}</h2>
                 <ul>
-                    <li v-for="(item,index) in group.items" :key="index" class="list-group-item">
+                    <li @click="selectItem(item)" v-for="(item,index) in group.items" :key="index" class="list-group-item">
                         <img v-lazy="item.avatar" class="avatar">
                         <span class="name">{{item.name}}</span>
                     </li>
@@ -38,8 +38,8 @@
             return{
                 scrollY:-1,
                 currentIndex:0,
-                probeTybe:3,
-                listenScroll:true,
+                // probeTybe:3,
+                // listenScroll:true,
                 diff:-1     //与上线的距离
             }
         },
@@ -51,8 +51,8 @@
         },
         created(){
             this.touch = {}
-            // this.listenScroll = true
-            // this.probeTybe = 3
+            this.listenScroll = true
+            this.probeTybe = 3
             this.listHeight=[]
         },
         computed:{
@@ -71,6 +71,10 @@
             }
         },
         methods:{
+            //点击进入歌手详情页
+            selectItem(item){
+                this.$emit('select',item)
+            },
             //侧边可滚动开始
             onShortcutTouchStart(e){
                 //获取下标
@@ -105,7 +109,7 @@
                 }else if(index>this.listHeight.length-2){
                     index = this.listHeight.length-2;
                 }
-                console.log(index);
+                // console.log(index);
                 //获取上限的位置=>scrollY=>侧边可以联动
                 this.scrollY = -this.listHeight[index];
                 this.$refs.listview.scrollToElement(this.$refs.listGroup[index],0)

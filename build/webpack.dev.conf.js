@@ -56,6 +56,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         }).catch((e) => {    //如果接口有问题，catch（）
         console.log(e)
         })
+      }),
+      app.get('/api/getSingerDetail', function (req, res) {
+        var url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg' 
+        axios.get(url, {        
+          headers: {             
+            referer: 'https://c.y.qq.com/',        
+            host: 'c.y.qq.com'
+          },
+          params: req.query    //浏览器请求该接口所带来的参数 
+        }).then((response) => {    //成功回调
+        res.json(response.data)    //response是QQ接口返回的，res是我们自己的。所以要把数据输出给浏览器前端
+        }).catch((e) => {    //如果接口有问题，catch（）
+        console.log(e)
+        })
       })
     },
       
